@@ -1,5 +1,5 @@
 ---
-title: Coronovirus in Brazil
+title: Coronavirus in Brazil
 author: Aarathy
 date: '2020-09-02'
 slug: blogpostmd
@@ -17,34 +17,128 @@ image:
 projects: []
 ---
 
+2019 Novel Coronavirus (2019-nCoV) is a virus (more specifically, a coronavirus) identified as the cause of an outbreak of respiratory illness first detected in Wuhan, China. Early on, many of the patients in the outbreak in Wuhan, China reportedly had some link to a large seafood and animal market, suggesting animal-to-person spread. However, a growing number of patients reportedly have not had exposure to animal markets, indicating person-to-person spread is occurring. At this time, itâ€™s unclear how easily or sustainably this virus is spreading between people - CDC
+
+This dataset has information on the number of cases in Brazil. Please note that this is a time series data and so the number of cases on any given day is a cumulative number.
+
+The data is available from Jan/30/2020, when the first suspect case appeared in Brazil.
+
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE,message=FALSE,warning=FALSE)
 library(tidyverse)
 library(tidycovid19)
 library(coronavirus)
 library(ggplot2)
+library(readr)
 library(zoo)
+library(naniar)
+library(visdat)
+library(tidyr)
+library(leaflet)
 ```
 
 
+```{r data}
+region<-  read_csv(here::here("datasets/brazil/brazil_covid19.csv"))
+
+city_coord <- read_csv(here::here("datasets/brazil/brazil_cities_coordinates.csv"))
+
+city <- read_csv(here::here("datasets/brazil/brazil_covid19_cities.csv"))
+
+city_pop<- read_csv(here::here("datasets/brazil/brazil_population_2019.csv"))
+
+```
+
+```{r wrangle}
+
+ 
+city_pop_join <- city %>% 
+  left_join(city_pop,by=c("name"="city"))
+  
+city_coord_join<- city %>% 
+  left_join(city_coord,by=c("name"="city_name"))
+states <- city_pop %>%
+  distinct(state)%>% arrange((state))
+
+city_state <- city %>%
+  distinct(state) %>% arrange((state)) %>% rename(abbr_state=state)
+
+combine <- cbind(states,city_state)
+  
+
+combine$abbr_state <- recode(combine$abbr_state,
+                             "AP"="AM",
+                             "AM"="AP",
+                             "MG"="MT",
+                             "MT"="MG",
+                             "PE"="PR",
+                             "PI"="PE",
+                             "PR"="PI",
+                             "RO"="RS",
+                             "RR"="RO",
+                             "RS"="RR",
+                             "SE"="SP",
+                             "SP"="SE")
+
+```
+
 
 ```{r}
-corona <- coronavirus %>% filter(country=="Brazil")
 
-df <- download_merged_data(cached = TRUE, silent = TRUE)
-  brazil <- df %>%
-  filter(iso3c == "BRA")
+sele <- city_pop_join %>%
+  mutate(population = as.numeric(population)) %>%
+  select(state.x, name, cases, deaths, population) %>%
+  group_by(state.x, name, population) %>%
+  summarise(cases = max(cases),
+            deaths = max(deaths))
+
+
+
+selebefore <- sele %>%
+  group_by(state.x, name) %>%
+  summarise(population = sum(population))
+
+sele <- sele %>%
+  select(state.x, name, cases, deaths) %>%
+  left_join(selebefore, by = "name") %>% select(-state.x.y)
+
+sele$population <- sele$population %>% replace_na("Unknown")
+
+sele <- full_join(sele, combine, by = c("state.x.x" = "abbr_state")) %>%
+  rename(state_abbr = state.x.x,
+         city_name = name)
+
+sele <- sele %>%
+  group_by(state, city_name, population) %>%
+  summarise(cases = max(cases),
+            deaths = max(deaths)) %>%
+  arrange(desc(cases, as.numeric(population)))
+
+
+
+
+
+```
+
+```{r}
+leaf <- city_coord_join %>% group_by(state,name,lat,long) %>%
+  summarise(cases=max(cases)) 
+leaf <- leaf %>% arrange(desc(cases))
+top50 <- head(leaf,50)
+
+  map <- leaflet(data = top50,options = leafletOptions(minZoom = 4)) %>% addTiles() %>%
+  addCircleMarkers(~long, ~lat, popup = ~as.character(name), label = ~as.character(name),radius = leaf$cases/5000, color="darkred",fillOpacity = 0.1)
   
-  brazil%>%
-  mutate(
-    new_cases = confirmed - lag(confirmed),
-    ave_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right")
-  ) %>%
-  filter(!is.na(new_cases), !is.na(ave_new_cases)) %>%
-  ggplot(aes(x = date)) +
-  geom_bar(aes(y = new_cases), stat = "identity", fill = "lightblue") +
-  geom_line(aes(y = ave_new_cases), color ="red") +
-  theme_minimal()
+setMaxBounds(map, max(top50$long), max(top50$lat),min(top50$long),min(top50$lat)) %>%
+  setView(-46.6395,-23.532900,zoom=4)
 
+```
+
+
+```{r}
+widgetframe::frameWidget(DT::datatable(sele, 
+                                       colnames = c('State', 'City', 
+                                                    'Population', 'Cases', 'Deaths')))
 ```
 
