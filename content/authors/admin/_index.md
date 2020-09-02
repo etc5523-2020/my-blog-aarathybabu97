@@ -9,7 +9,7 @@ education:
 email: abab0012@student.monash.edu
 organizations:
 - name: Monash University
-  url: "www.monash.edu"
+  url: "https://www.monash.edu/"
 role: Student
 social:
 - icon: envelope
