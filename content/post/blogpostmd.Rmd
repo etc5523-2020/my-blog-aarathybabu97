@@ -85,6 +85,32 @@ combine$abbr_state <- recode(combine$abbr_state,
 
 
 ```{r}
+library(tidycovid19)
+library(gganimate)
+library(lubridate)
+
+
+brz <- download_merged_data(cached = TRUE, silent = TRUE)
+
+
+brz %>%
+  filter(country == "Brazil") %>%
+  mutate(
+    new_cases = confirmed - lag(confirmed),
+    ave_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right")
+  ) %>%
+  filter(!is.na(new_cases), !is.na(ave_new_cases)) %>%
+  ggplot(aes(x = date)) +
+  geom_line(aes(y = ave_new_cases), color ="#d62828") +
+  theme_minimal() + xlab("Date")+
+  ylab("New cases")+
+  scale_x_date(date_breaks = "1 month", date_labels = "%b")+
+  transition_reveal(date)
+
+```
+
+
+```{r}
 
 sele <- city_pop_join %>%
   mutate(population = as.numeric(population)) %>%
@@ -122,15 +148,20 @@ sele <- sele %>%
 ```
 
 ```{r}
+
+
+
 leaf <- city_coord_join %>% group_by(state,name,lat,long) %>%
   summarise(cases=max(cases)) 
 leaf <- leaf %>% arrange(desc(cases))
 top50 <- head(leaf,50)
 
-  map <- leaflet(data = top50,options = leafletOptions(minZoom = 4)) %>% addTiles() %>%
+
+
+  map <- leaflet(data = top50,options = leafletOptions(minZoom = 4)) %>% addTiles() %>% 
   addCircleMarkers(~long, ~lat, popup = ~as.character(name), label = ~as.character(name),radius = leaf$cases/5000, color="darkred",fillOpacity = 0.1)
   
-setMaxBounds(map, max(top50$long), max(top50$lat),min(top50$long),min(top50$lat)) %>%
+setMaxBounds(map, -28.628965, 5.269331,-73.983063,-33.868906) %>%
   setView(-46.6395,-23.532900,zoom=4)
 
 ```
