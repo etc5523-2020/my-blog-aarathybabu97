@@ -16,3 +16,33 @@ image:
   preview_only: no
 projects: []
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(tidycovid19)
+library(coronavirus)
+library(ggplot2)
+library(zoo)
+```
+
+```{r}
+corona <- coronavirus %>% filter(country=="Brazil")
+
+df <- download_merged_data(cached = TRUE, silent = TRUE)
+  brazil <- df %>%
+  filter(iso3c == "BRA")
+  
+  brazil%>%
+  mutate(
+    new_cases = confirmed - lag(confirmed),
+    ave_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right")
+  ) %>%
+  filter(!is.na(new_cases), !is.na(ave_new_cases)) %>%
+  ggplot(aes(x = date)) +
+  geom_bar(aes(y = new_cases), stat = "identity", fill = "lightblue") +
+  geom_line(aes(y = ave_new_cases), color ="red") +
+  theme_minimal()
+
+```
+
