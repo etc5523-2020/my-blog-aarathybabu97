@@ -1,6 +1,6 @@
 ---
-title: Coronavirus in Brazil
-author: Aarathy
+title: "Coronavirus in Brazil"
+author: "Aarathy"
 date: '2020-09-02'
 slug: blogpostmd
 categories: []
@@ -9,7 +9,7 @@ subtitle: ''
 summary: ''
 authors: []
 lastmod: '2020-09-02T13:22:25+10:00'
-featured: true
+featured: yes
 image:
   caption: ''
   focal_point: ''
@@ -93,15 +93,17 @@ library(lubridate)
 brz <- download_merged_data(cached = TRUE, silent = TRUE)
 
 
-brz %>%
-  filter(country == "Brazil") %>%
+brz_filter <- brz %>%
+  filter(country == "Brazil") 
+
+brz_filter%>%
   mutate(
     new_cases = confirmed - lag(confirmed),
-    ave_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right")
+    avg_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right")
   ) %>%
-  filter(!is.na(new_cases), !is.na(ave_new_cases)) %>%
+  filter(!is.na(new_cases), !is.na(avg_new_cases)) %>%
   ggplot(aes(x = date)) +
-  geom_line(aes(y = ave_new_cases), color ="#d62828") +
+  geom_line(aes(y = avg_new_cases), color ="#d62828") +
   theme_minimal() + xlab("Date")+
   ylab("New cases")+
   scale_x_date(date_breaks = "1 month", date_labels = "%b")+
@@ -166,10 +168,65 @@ setMaxBounds(map, -28.628965, 5.269331,-73.983063,-33.868906) %>%
 
 ```
 
+2019 Novel Coronavirus (2019-nCoV) is a virus (more specifically, a coronavirus) identified as the cause of an outbreak of respiratory illness first detected in Wuhan, China. Early on, many of the patients in the outbreak in Wuhan, China reportedly had some link to a large seafood and animal market, suggesting animal-to-person spread. However, a growing number of patients reportedly have not had exposure to animal markets, indicating person-to-person spread is occurring. At this time, itâ€™s unclear how easily or sustainably this virus is spreading between people - CDC
+
+This dataset has information on the number of cases in Brazil. Please note that this is a time series data and so the number of cases on any given day is a cumulative number.
+
+```{r, fig.height=5}
+library(DT)
+library(widgetframe)
+frameWidget(datatable(sele, extensions = 'Responsive',
+                                       colnames = c('S.No','State', 'City', 
+                                                    'Population', 'Cases', 'Deaths'), filter = 'top',  options = list(pageLength = 5, autoWidth = TRUE,height = 'auto',scroller = TRUE)))
+
+
+
+```
+
 
 ```{r}
-widgetframe::frameWidget(DT::datatable(sele, 
-                                       colnames = c('State', 'City', 
-                                                    'Population', 'Cases', 'Deaths')))
+table2 <- brz_filter%>%
+  mutate(
+    new_cases = confirmed - lag(confirmed),
+    new_deaths = deaths - lag(deaths),
+    new_recover = recovered - lag(recovered),
+    avg_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right"),
+    avg_new_deaths = rollmean(new_deaths, 7, na.pad=TRUE, align="right"),
+    avg_new_recover = rollmean(new_recover, 7, na.pad=TRUE, align="right")
+    ) %>%
+  filter(!is.na(new_cases))
 ```
+
+
+
+
+
+2019 Novel Coronavirus (2019-nCoV) is a virus (more specifically, a coronavirus) identified as the cause of an outbreak of respiratory illness first detected in Wuhan, China. Early on, many of the patients in the outbreak in Wuhan, China reportedly had some link to a large seafood and animal market, suggesting animal-to-person spread. However, a growing number of patients reportedly have not had exposure to animal markets, indicating person-to-person spread is occurring. At this time, itâ€™s unclear how easily or sustainably this virus is spreading between people - CDC
+
+This dataset has information on the number of cases in Brazil. Please note that this is a time series data and so the number of cases on any given day is a cumulative number.
+
+
+```{r , results='asis'}
+library(arsenal)
+mycontrols  <- tableby.control(test=FALSE, total=FALSE,
+                               numeric.test="kwt", cat.test="chisq",
+                               numeric.stats=c("mean", "median", "q1q3","range", "Nmiss2"),
+                               cat.stats=c("countpct","Nmiss2"),
+                               stats.labels=list(
+                                                 mean="Mean",
+                                                 median='Median', q1q2 = 'Quantiles(Q1,Q2)',
+                               range = "Min - Max",
+    Nmiss2 = "Missing"))
+
+my_labels <- list(
+  avg_new_cases = "Daily Cases",
+  avg_new_deaths = "Daily Deaths",
+  avg_new_recover = "Daily recovery"
+)
+tab2 <- tableby(~avg_new_cases + avg_new_deaths +avg_new_recover , data=table2, control=mycontrols)
+
+summary(tab2, labelTranslations = my_labels, title = "Data")  
+```
+
+
 
