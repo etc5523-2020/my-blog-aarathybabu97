@@ -249,7 +249,7 @@ setMaxBounds(map, -28.628965, 5.269331,-73.983063,-33.868906) %>%
 
 ```
 
-Cities like *Brasília*,*Rio de Janeiro* are few of the many cities in Brazil that have bore the brunt of the pandemic. Table \@ref(fig:brazilcity) shows the confirmed cases and deaths of the cities in Brazil along with it's population. *São Paulo*,the most affected city saw 4.4 % of the cases reported result in death where as *Rio de Janeiro* saw more than 10 % .Despite having less population and positive cases when compared to *São Paulo*, *Rio de Janeiro* and *Fortaleza* has more deaths among the cases. Cities like *Laje do Muriaé* in the state of *Rio de Janeiro* and *Fernando Falcão* in state of *Maranhão* saw 233 and 734 confirmed cases respectively with 0 deaths. 
+Cities like *Brasília*,*Rio de Janeiro* are few of the many cities in Brazil that have bore the brunt of the pandemic. Table \@ref(fig:brazilcity) shows the confirmed cases and deaths of the cities in Brazil along with it's population. *São Paulo*,the most affected city saw 4.4 % of the cases reported result in death where as *Rio de Janeiro* saw more than 10 %. Despite having less population and positive cases when compared to *São Paulo*, *Rio de Janeiro* and *Fortaleza* has more deaths among the cases. Cities like *Laje do Muriaé* in the state of *Rio de Janeiro* and *Fernando Falcão* in state of *Maranhão* saw 233 and 734 confirmed cases respectively with 0 deaths. 
 
 ```{r brazilcity, fig.cap = "COVID-19 in Cities of Brazil"}
 
