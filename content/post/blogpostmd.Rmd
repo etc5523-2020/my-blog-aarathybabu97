@@ -19,7 +19,7 @@ projects: []
 
 Coronavirus,COVID, 2019-nCoV acute respiratory disease,the **Coronavirus disease 2019 (COVID-19)** that has ravaged the world has many names since it saw it's origin in Wuhan,China in December 2019. More than 26 million cases have been reported across the world as of 3 September 2020 and has taken a terrible toll on the lives of people worldwide. The United States of America, Brazil, India, Russia are few of the many countries who have bore the brunt of COVID-19 and are with most number of confirmed cases as of 3 September 2019. This blog post focuses on how Brazil and it's cities are affected by the deadly COVID-19. 
 
-The datasets used for the analysis undertaken are [Coronavirus(COVID-19) - Brazil](https://www.kaggle.com/unanimad/corona-virus-brazil) sourced from [kaggle](https://www.kaggle.com/)  and the R package, [tidycovid19](https://github.com/joachim-gassen/tidycovid19). The Coronavirus(COVID-19) - Brazil is licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) and has information on the number of cases and deaths in Brazil,city and region wise.The dataset contains variables depicting the city and the corresponding population and location,state,region and the cumulative number of cases and deaths. The R package,tidycovid19 has country wise data on cumulative number of cases,deaths and recovery alongside other attributes that depicts lockdown ,social distancing measure etc. 
+The datasets used for the analysis undertaken are [Coronavirus(COVID-19) - Brazil](https://www.kaggle.com/unanimad/corona-virus-brazil) sourced from [kaggle](https://www.kaggle.com/)  and the R package, [tidycovid19](https://github.com/joachim-gassen/tidycovid19). The Coronavirus(COVID-19) - Brazil is licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) and has information on the number of cases and deaths in Brazil,city and region wise.The dataset contains variables depicting the city and the corresponding population and location,state,region and the cumulative number of cases and deaths. The R package,tidycovid19 has country wise data on cumulative number of cases,deaths and recovery alongside other attributes that depicts lockdown ,social distancing measures etc. 
 
 
 ```{r setup, include=FALSE}
@@ -133,6 +133,7 @@ table2 <- brz_filter%>%
 
 In order to get a good idea about the data , the summary statistics was taken into consideration. Table \@ref(tab:arsenal) shows the summary statistics such as mean, median,quantiles etc ,of the data used for the analysis.From the table,it is clear that with cases going up each day with an average 17,847 cases daily,the number of deaths due to COVID-19 is also increasing with an average 552 deaths per day.The highest death toll seen in a single day as of 2 September 2020 is 1595 where as the highest number of reported cases in a single day is 69074.The condition of Brazil has deteriorated since April with 50 % of daily cases reported are above 11,377 and 50% of the deaths reported daily are above 554.It can also be seen that the highest number of daily recovered cases yet is 140,050.
 
+
 ```{r arsenal,results='asis'}
 
 mycontrols  <- tableby.control(test=FALSE, total=FALSE,
@@ -170,6 +171,7 @@ covid_region <- region_join %>%
   arrange(desc(cases),desc(deaths)) %>%
   mutate(Deaths_Percentage=round((deaths/cases)*100,2))%>%
   rename(Region=region,Cases=cases,Deaths=deaths)
+
 
 reactable(
   covid_region,
@@ -247,7 +249,7 @@ setMaxBounds(map, -28.628965, 5.269331,-73.983063,-33.868906) %>%
 
 ```
 
-Cities like *Brasília*,*Rio de Janeiro* are few of the many cities in Brazil that have bore the brunt of the pandemic. Table \@ref(fig:brazilcity) shows the confirmed cases and deaths of the cities in Brazil along with it's population. *São Paulo*,the most affected city saw 4.4 % of the cases reported result in death where as *Rio de Janeiro* saw 10 % .Cities like *Laje do Muriaé* in the state of *Rio de Janeiro* and *Fernando Falcão* in state of *Maranhão* saw 233 and 734 confirmed cases respectively with 0 deaths. 
+Cities like *Brasília*,*Rio de Janeiro* are few of the many cities in Brazil that have bore the brunt of the pandemic. Table \@ref(fig:brazilcity) shows the confirmed cases and deaths of the cities in Brazil along with it's population. *São Paulo*,the most affected city saw 4.4 % of the cases reported result in death where as *Rio de Janeiro* saw more than 10 % .Despite having less population and positive cases when compared to *São Paulo*, *Rio de Janeiro* and *Fortaleza* has more deaths among the cases. Cities like *Laje do Muriaé* in the state of *Rio de Janeiro* and *Fernando Falcão* in state of *Maranhão* saw 233 and 734 confirmed cases respectively with 0 deaths. 
 
 ```{r brazilcity, fig.cap = "COVID-19 in Cities of Brazil"}
 
@@ -267,6 +269,7 @@ mutate(Deaths_Percentage=round((Deaths/Cases)*100,2)) %>%
   ),
   columns = list(
   Deaths_Percentage = colDef(name = "Deaths among Cases (%)",minWidth=200),
+  City=colDef(minWidth=140),
   Population=colDef(minWidth=140)),
   searchable = TRUE,
   filterable = TRUE,
