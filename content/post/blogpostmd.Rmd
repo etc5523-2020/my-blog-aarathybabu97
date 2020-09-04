@@ -268,8 +268,7 @@ mutate(Deaths_Percentage=round((Deaths/Cases)*100,2)) %>%
     headerStyle = list(background = "#f7f7f8")
   ),
   columns = list(
-  Deaths_Percentage = colDef(name = "Deaths among Cases (%)",minWidth=200),
-  City=colDef(minWidth=140),
+  Deaths_Percentage = colDef(name = "Deaths among Cases (%)",minWidth=100),
   Population=colDef(minWidth=140)),
   searchable = TRUE,
   filterable = TRUE,
