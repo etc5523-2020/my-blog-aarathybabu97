@@ -17,25 +17,29 @@ image:
 projects: []
 ---
 
-2019 Novel Coronavirus (2019-nCoV) is a virus (more specifically, a coronavirus) identified as the cause of an outbreak of respiratory illness first detected in Wuhan, China. Early on, many of the patients in the outbreak in Wuhan, China reportedly had some link to a large seafood and animal market, suggesting animal-to-person spread. However, a growing number of patients reportedly have not had exposure to animal markets, indicating person-to-person spread is occurring. At this time, itâ€™s unclear how easily or sustainably this virus is spreading between people - CDC
+Coronavirus,COVID, 2019-nCoV acute respiratory disease,the *Coronavirus disease 2019 (COVID-19)* that has ravaged the world has many names since it saw it's origin in Wuhan,China in December 2019. More than 26 million cases have been reported across the world as of 3 September 2020 and has taken a terrible toll on the lives of people worldwide. The United States of America, Brazil, India, Russia are few of the many countries who have bore the brunt of COVID-19 and with most number of confirmed cases as of 3 September 2019. This blog post focuses on how Brazil and it's cities are affected by the deadly COVID-19. 
 
-This dataset has information on the number of cases in Brazil. Please note that this is a time series data and so the number of cases on any given day is a cumulative number.
-
-The data is available from Jan/30/2020, when the first suspect case appeared in Brazil.
+The datasets used for the analysis undertaken are [Coronavirus(COVID-19) - Brazil](https://www.kaggle.com/unanimad/corona-virus-brazil) sourced from [kaggle](https://www.kaggle.com/) and licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) that has city and region wise information on the number of cases and deaths in Brazil.
+The dataset contains variables depicting the city and the corresponding population and location,state,region and the cumulative number of cases and deaths. and the package, [tidycovid19](https://github.com/joachim-gassen/tidycovid19) which has country wise data on cumulative number of cases,deaths and recovery alongside other attributes that depicts lockdown ,social distancing measure etc. 
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE,message=FALSE,warning=FALSE)
+knitr::opts_chunk$set(echo = FALSE,message=FALSE,warning=FALSE,fig.align = 'center')
 library(tidyverse)
 library(tidycovid19)
-library(coronavirus)
+library(gganimate)
+library(lubridate)
 library(ggplot2)
 library(readr)
 library(zoo)
+library(bookdown)
 library(naniar)
 library(visdat)
+library(htmltools)
 library(tidyr)
 library(leaflet)
+library(reactable)
+library(arsenal)
 ```
 
 
@@ -83,36 +87,109 @@ combine$abbr_state <- recode(combine$abbr_state,
 
 ```
 
+After careful analysis using the datasets mentioned above,it was found that Brazil saw an increase in COVID-19 positive cases from April after which it saw a steep rise with cases as high as above 46,000 cases daily in the August 2020 as shown in \@ref(fig:figure).
 
-```{r}
-library(tidycovid19)
-library(gganimate)
-library(lubridate)
-
+```{r figure,fig.cap="COVID-19 positive cases are rising daily."}
 
 brz <- download_merged_data(cached = TRUE, silent = TRUE)
-
 
 brz_filter <- brz %>%
   filter(country == "Brazil") 
 
 brz_filter%>%
   mutate(
-    new_cases = confirmed - lag(confirmed),
-    avg_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right")
+    daily_cases = confirmed - lag(confirmed),
+    avg_daily_cases = rollmean(daily_cases, 7, na.pad=TRUE, align="right")
   ) %>%
-  filter(!is.na(new_cases), !is.na(avg_new_cases)) %>%
+  filter(!is.na(daily_cases), !is.na(avg_daily_cases)) %>%
   ggplot(aes(x = date)) +
-  geom_line(aes(y = avg_new_cases), color ="#d62828") +
-  theme_minimal() + xlab("Date")+
-  ylab("New cases")+
+  geom_line(aes(y = avg_daily_cases), color ="#d62828") + ggtitle("Daily Reported Cases") +
+  theme(plot.title = element_text(hjust = 0.5))+
+  ggthemes::theme_economist_white()+
+  xlab("Date")+
+  ylab("COVID-19 cases")+
   scale_x_date(date_breaks = "1 month", date_labels = "%b")+
   transition_reveal(date)
 
 ```
 
 
+
 ```{r}
+table2 <- brz_filter%>%
+  mutate(
+    new_cases = confirmed - lag(confirmed),
+    new_deaths = deaths - lag(deaths),
+    new_recover = recovered - lag(recovered),
+    avg_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right"),
+    avg_new_deaths = rollmean(new_deaths, 7, na.pad=TRUE, align="right"),
+    avg_new_recover = rollmean(new_recover, 7, na.pad=TRUE, align="right")
+    ) %>%
+  filter(!is.na(new_cases))
+```
+
+In order to get a good idea about the data , the summary statistics was taken into consideration. The table \@ref(tab:arsenal) shows the summary statistics on the data used for the analysis.From the table,it is clear that with cases going up each day with an average 17,677 cases daily,the number of deaths due to COVID-19 is also increasing with an average 554 deaths per day.The highest death toll seen in a single day as of 1 September 2020  is 1097 where as the highest number of reported cases in a single day is 46,393.The condition of Brazil has deteriorated since April with 50 % of daily cases reported are above 11,065 and 50% of the deaths reported daily are above 714.It can also be seen that the highest number of daily recovered cases yet is 50,548.
+
+```{r arsenal,results='asis'}
+
+mycontrols  <- tableby.control(test=FALSE, total=FALSE,
+                               numeric.test="kwt", cat.test="chisq",
+                               numeric.stats=c("mean", "median", "q1q3","range", "Nmiss2"),
+                               cat.stats=c("countpct","Nmiss2"),
+                               stats.labels=list(
+                                                 mean="Mean",
+                                                 median='Median', q1q2 = 'Quantiles',
+                               range = "Min - Max",
+    Nmiss2 = "Missing"))
+
+my_labels <- list(
+  avg_new_cases = "Daily Cases",
+  avg_new_deaths = "Daily Deaths",
+  avg_new_recover = "Daily recovery"
+)
+tab2 <- tableby(~ avg_new_cases + avg_new_deaths+avg_new_recover , data=table2, control=mycontrols)
+
+summary(tab2, labelTranslations = my_labels, title = "(\\#tab:arsenal) Numerical Summary Statistics of Cornavirus Dataset on Brazil", position = "float_right")  
+```
+
+Brazil,the fifth largest country in the world as well as ranking sixth in terms of population,is geopolitically divided into five regions with each region composed of three or more states. Let us now look at the COVID-19 data on a regional level below \@ref(fig:region).The region *Sudeste* is the most affected area in Brazil by the pandemic with total cases rising up to 81,4375 and a staggering count of 30,375 deaths that is, around 3.73 % of the people who contracted the virus have died due to the same. The lowest death to cases ratio is seen in *Centro-Oeste* with 1.96% of deaths among the total cases. 
+
+```{r region, fig.cap="Region wise data on COVID-19"}
+region_join <- region %>%
+  left_join(combine,by=c("state"="abbr_state"))%>%
+  select(date,region,state.y,cases,deaths) %>%
+  rename(state=state.y)
+
+covid_region <- region_join %>%
+  group_by(region)%>%
+  summarise(cases=max(cases),
+            deaths=max(deaths)) %>% 
+  arrange(desc(cases),desc(deaths)) %>%
+  mutate(Deaths_Percentage=round((deaths/cases)*100,2))%>%
+  rename(Region=region,Cases=cases,Deaths=deaths)
+
+reactable(
+  covid_region,
+  columns = list(
+  Deaths_Percentage = colDef(name = "Deaths among Cases (%)")),
+  searchable = TRUE,
+  striped = TRUE,
+  highlight = TRUE,
+  bordered = TRUE,
+  theme = reactableTheme(
+    borderColor = "#dfe2e5",
+    stripedColor = "#f6f8fa",
+    highlightColor = "#f0f5f9",
+    cellPadding = "8px 12px",
+    style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
+    searchInputStyle = list(width = "25%")
+  )
+)
+```
+
+Brazil has few of the most populous cities in the world therefore let's dig deeper to find which cities of Brazil has been most affected by the pandemic.Shown in the figure \@ref(fig:leaf) are the top 50 cities which has been severely affected by COVID-19.
+
+```{r sele}
 
 sele <- city_pop_join %>%
   mutate(population = as.numeric(population)) %>%
@@ -120,8 +197,6 @@ sele <- city_pop_join %>%
   group_by(state.x, name, population) %>%
   summarise(cases = max(cases),
             deaths = max(deaths))
-
-
 
 selebefore <- sele %>%
   group_by(state.x, name) %>%
@@ -143,13 +218,9 @@ sele <- sele %>%
             deaths = max(deaths)) %>%
   arrange(desc(cases, as.numeric(population)))
 
-
-
-
-
 ```
 
-```{r}
+```{r leaf , fig.cap= "COVID-19 in Cities of Brazil"}
 
 
 
@@ -172,61 +243,51 @@ setMaxBounds(map, -28.628965, 5.269331,-73.983063,-33.868906) %>%
 
 This dataset has information on the number of cases in Brazil. Please note that this is a time series data and so the number of cases on any given day is a cumulative number.
 
-```{r, fig.height=5}
-library(DT)
-library(widgetframe)
-frameWidget(datatable(sele, extensions = 'Responsive',
-                                       colnames = c('S.No','State', 'City', 
-                                                    'Population', 'Cases', 'Deaths'), filter = 'top',  options = list(pageLength = 5, autoWidth = TRUE,height = 'auto',scroller = TRUE)))
 
 
+```{r, fig.cap = "City wise Data"}
 
-```
-
-
-```{r}
-table2 <- brz_filter%>%
-  mutate(
-    new_cases = confirmed - lag(confirmed),
-    new_deaths = deaths - lag(deaths),
-    new_recover = recovered - lag(recovered),
-    avg_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right"),
-    avg_new_deaths = rollmean(new_deaths, 7, na.pad=TRUE, align="right"),
-    avg_new_recover = rollmean(new_recover, 7, na.pad=TRUE, align="right")
-    ) %>%
-  filter(!is.na(new_cases))
-```
-
-
-
-
-
-2019 Novel Coronavirus (2019-nCoV) is a virus (more specifically, a coronavirus) identified as the cause of an outbreak of respiratory illness first detected in Wuhan, China. Early on, many of the patients in the outbreak in Wuhan, China reportedly had some link to a large seafood and animal market, suggesting animal-to-person spread. However, a growing number of patients reportedly have not had exposure to animal markets, indicating person-to-person spread is occurring. At this time, itâ€™s unclear how easily or sustainably this virus is spreading between people - CDC
-
-This dataset has information on the number of cases in Brazil. Please note that this is a time series data and so the number of cases on any given day is a cumulative number.
-
-
-```{r , results='asis'}
-library(arsenal)
-mycontrols  <- tableby.control(test=FALSE, total=FALSE,
-                               numeric.test="kwt", cat.test="chisq",
-                               numeric.stats=c("mean", "median", "q1q3","range", "Nmiss2"),
-                               cat.stats=c("countpct","Nmiss2"),
-                               stats.labels=list(
-                                                 mean="Mean",
-                                                 median='Median', q1q2 = 'Quantiles(Q1,Q2)',
-                               range = "Min - Max",
-    Nmiss2 = "Missing"))
-
-my_labels <- list(
-  avg_new_cases = "Daily Cases",
-  avg_new_deaths = "Daily Deaths",
-  avg_new_recover = "Daily recovery"
+sele <- sele %>%
+  rename(State = state,
+         City=city_name,
+         Population=population,
+         Cases=cases,
+         Deaths=deaths) %>%
+mutate(Deaths_Percentage=round((Deaths/Cases)*100,2))
+ reactable(
+  sele,
+  columns = list(
+  Deaths_Percentage = colDef(name = "Deaths among Cases (%)")),
+  searchable = TRUE,
+  filterable = TRUE,
+  defaultSortOrder = "desc",
+  striped = TRUE,
+  minRows = 5,
+  
+  defaultPageSize = 5,
+  showPageSizeOptions = TRUE,
+  highlight = TRUE,
+  bordered = TRUE,
+  theme = reactableTheme(
+   
+    borderColor = "#dfe2e5",
+    stripedColor = "#f6f8fa",
+    highlightColor = "#f0f5f9",
+    cellPadding = "8px 12px",
+    style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
+    searchInputStyle = list(width = "100%")
+  )
 )
-tab2 <- tableby(~avg_new_cases + avg_new_deaths +avg_new_recover , data=table2, control=mycontrols)
+ 
 
-summary(tab2, labelTranslations = my_labels, title = "Data")  
+
 ```
+
+
+
+
+
+
 
 
 
