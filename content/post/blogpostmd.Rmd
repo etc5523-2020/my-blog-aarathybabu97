@@ -17,10 +17,9 @@ image:
 projects: []
 ---
 
-Coronavirus,COVID, 2019-nCoV acute respiratory disease,the *Coronavirus disease 2019 (COVID-19)* that has ravaged the world has many names since it saw it's origin in Wuhan,China in December 2019. More than 26 million cases have been reported across the world as of 3 September 2020 and has taken a terrible toll on the lives of people worldwide. The United States of America, Brazil, India, Russia are few of the many countries who have bore the brunt of COVID-19 and with most number of confirmed cases as of 3 September 2019. This blog post focuses on how Brazil and it's cities are affected by the deadly COVID-19. 
+Coronavirus,COVID, 2019-nCoV acute respiratory disease,the **Coronavirus disease 2019 (COVID-19)** that has ravaged the world has many names since it saw it's origin in Wuhan,China in December 2019. More than 26 million cases have been reported across the world as of 3 September 2020 and has taken a terrible toll on the lives of people worldwide. The United States of America, Brazil, India, Russia are few of the many countries who have bore the brunt of COVID-19 and are with most number of confirmed cases as of 3 September 2019. This blog post focuses on how Brazil and it's cities are affected by the deadly COVID-19. 
 
-The datasets used for the analysis undertaken are [Coronavirus(COVID-19) - Brazil](https://www.kaggle.com/unanimad/corona-virus-brazil) sourced from [kaggle](https://www.kaggle.com/) and licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) that has city and region wise information on the number of cases and deaths in Brazil.
-The dataset contains variables depicting the city and the corresponding population and location,state,region and the cumulative number of cases and deaths. and the package, [tidycovid19](https://github.com/joachim-gassen/tidycovid19) which has country wise data on cumulative number of cases,deaths and recovery alongside other attributes that depicts lockdown ,social distancing measure etc. 
+The datasets used for the analysis undertaken are [Coronavirus(COVID-19) - Brazil](https://www.kaggle.com/unanimad/corona-virus-brazil) sourced from [kaggle](https://www.kaggle.com/)  and the R package, [tidycovid19](https://github.com/joachim-gassen/tidycovid19). The Coronavirus(COVID-19) - Brazil is licensed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) and has information on the number of cases and deaths in Brazil,city and region wise.The dataset contains variables depicting the city and the corresponding population and location,state,region and the cumulative number of cases and deaths. The R package,tidycovid19 has country wise data on cumulative number of cases,deaths and recovery alongside other attributes that depicts lockdown ,social distancing measure etc. 
 
 
 ```{r setup, include=FALSE}
@@ -51,6 +50,11 @@ city_coord <- read_csv(here::here("datasets/brazil/brazil_cities_coordinates.csv
 city <- read_csv(here::here("datasets/brazil/brazil_covid19_cities.csv"))
 
 city_pop<- read_csv(here::here("datasets/brazil/brazil_population_2019.csv"))
+
+brz <- read_csv(here::here("datasets/brazil/brz.csv"))
+graph <- download_merged_data(cached = TRUE, silent = TRUE) %>%
+  filter(country == "Brazil") 
+  
 
 ```
 
@@ -85,23 +89,25 @@ combine$abbr_state <- recode(combine$abbr_state,
                              "SE"="SP",
                              "SP"="SE")
 
+
 ```
 
-After careful analysis using the datasets mentioned above,it was found that Brazil saw an increase in COVID-19 positive cases from April after which it saw a steep rise with cases as high as above 46,000 cases daily in the August 2020 as shown in \@ref(fig:figure).
+After careful analysis using the datasets mentioned above,it was found that Brazil saw an increase in COVID-19 positive cases from April after which it saw a steep rise with cases as high as above 46,000 cases daily in the August 2020 as shown in Figure \@ref(fig:figure).
 
-```{r figure,fig.cap="COVID-19 positive cases are rising daily."}
+```{r figure, fig.cap="COVID-19 positive cases are rising daily."}
 
-brz <- download_merged_data(cached = TRUE, silent = TRUE)
+
 
 brz_filter <- brz %>%
   filter(country == "Brazil") 
 
-brz_filter%>%
+
+graph %>%
   mutate(
     daily_cases = confirmed - lag(confirmed),
     avg_daily_cases = rollmean(daily_cases, 7, na.pad=TRUE, align="right")
   ) %>%
-  filter(!is.na(daily_cases), !is.na(avg_daily_cases)) %>%
+  filter(!is.na(daily_cases), !is.na(avg_daily_cases))%>%
   ggplot(aes(x = date)) +
   geom_line(aes(y = avg_daily_cases), color ="#d62828") + ggtitle("Daily Reported Cases") +
   theme(plot.title = element_text(hjust = 0.5))+
@@ -128,7 +134,7 @@ table2 <- brz_filter%>%
   filter(!is.na(new_cases))
 ```
 
-In order to get a good idea about the data , the summary statistics was taken into consideration. The table \@ref(tab:arsenal) shows the summary statistics on the data used for the analysis.From the table,it is clear that with cases going up each day with an average 17,677 cases daily,the number of deaths due to COVID-19 is also increasing with an average 554 deaths per day.The highest death toll seen in a single day as of 1 September 2020  is 1097 where as the highest number of reported cases in a single day is 46,393.The condition of Brazil has deteriorated since April with 50 % of daily cases reported are above 11,065 and 50% of the deaths reported daily are above 714.It can also be seen that the highest number of daily recovered cases yet is 50,548.
+In order to get a good idea about the data , the summary statistics was taken into consideration. Table \@ref(tab:arsenal) shows the summary statistics such as mean, median,quantiles etc ,of the data used for the analysis.From the table,it is clear that with cases going up each day with an average 17,847 cases daily,the number of deaths due to COVID-19 is also increasing with an average 552 deaths per day.The highest death toll seen in a single day as of 2 September 2020 is 1595 where as the highest number of reported cases in a single day is 69074.The condition of Brazil has deteriorated since April with 50 % of daily cases reported are above 11,377 and 50% of the deaths reported daily are above 554.It can also be seen that the highest number of daily recovered cases yet is 140,050.
 
 ```{r arsenal,results='asis'}
 
@@ -143,16 +149,16 @@ mycontrols  <- tableby.control(test=FALSE, total=FALSE,
     Nmiss2 = "Missing"))
 
 my_labels <- list(
-  avg_new_cases = "Daily Cases",
-  avg_new_deaths = "Daily Deaths",
-  avg_new_recover = "Daily recovery"
+  new_cases = "Daily Cases",
+  new_deaths = "Daily Deaths",
+  new_recover = "Daily recovery"
 )
-tab2 <- tableby(~ avg_new_cases + avg_new_deaths+avg_new_recover , data=table2, control=mycontrols)
+tab2 <- tableby(~ new_cases + new_deaths+new_recover , data=table2, control=mycontrols)
 
-summary(tab2, labelTranslations = my_labels, title = "(\\#tab:arsenal) Numerical Summary Statistics of Cornavirus Dataset on Brazil", position = "float_right")  
+summary(tab2, labelTranslations = my_labels, title = "(\\#tab:arsenal) Numerical Summary Statistics of Cornavirus Dataset on Brazil", position = "center")  
 ```
 
-Brazil,the fifth largest country in the world as well as ranking sixth in terms of population,is geopolitically divided into five regions with each region composed of three or more states. Let us now look at the COVID-19 data on a regional level below \@ref(fig:region).The region *Sudeste* is the most affected area in Brazil by the pandemic with total cases rising up to 81,4375 and a staggering count of 30,375 deaths that is, around 3.73 % of the people who contracted the virus have died due to the same. The lowest death to cases ratio is seen in *Centro-Oeste* with 1.96% of deaths among the total cases. 
+Brazil,the fifth largest country in the world as well as ranking sixth in terms of population,is geopolitically divided into five regions with each region composed of three or more states. Let us now look at the COVID-19 data on a regional level below in Figure \@ref(fig:region).The region *Sudeste* is the most affected area in Brazil by the pandemic with total cases rising up to 814,375 and a staggering count of 30,375 deaths that is, around 3.73 % of the people who contracted the virus have died due to the same. The lowest death to cases ratio is seen in *Centro-Oeste* with 1.96% of deaths among the total cases. 
 
 ```{r region, fig.cap="Region wise data on COVID-19"}
 region_join <- region %>%
@@ -170,9 +176,13 @@ covid_region <- region_join %>%
 
 reactable(
   covid_region,
-  defaultColDef = colDef(minWidth = 200),
+   defaultColDef = colDef(
+    align = "center",
+    headerStyle = list(background = "#f7f7f8")
+  ),
   columns = list(
-  Deaths_Percentage = colDef(name = "Deaths among Cases (%)")),
+  Deaths_Percentage = colDef(name = "Deaths among Cases (%)",minWidth=200),
+  Region=colDef(minWidth=140)),
   searchable = TRUE,
   striped = TRUE,
   highlight = TRUE,
@@ -188,7 +198,7 @@ reactable(
 )
 ```
 
-Brazil has few of the most populous cities in the world therefore let's dig deeper to find which cities of Brazil has been most affected by the pandemic.Shown in the figure \@ref(fig:leaf) are the top 50 cities which has been severely affected by COVID-19.
+Brazil has few of the most populous cities in the world therefore let's dig deeper to find which cities of Brazil has been most affected by the pandemic.Shown in the Figure \@ref(fig:leaf), are the top 50 cities in Brazil which has been severely affected by COVID-19. *São Paulo*,the most populous city in Brazil is the most affected city with 260,991 confirmed cases. 
 
 ```{r sele}
 
@@ -221,7 +231,7 @@ sele <- sele %>%
 
 ```
 
-```{r leaf , fig.cap= "COVID-19 in Cities of Brazil"}
+```{r leaf, fig.cap= "Most affected Cities in Brazil"}
 
 
 
@@ -240,11 +250,9 @@ setMaxBounds(map, -28.628965, 5.269331,-73.983063,-33.868906) %>%
 
 ```
 
+Cities like *Brasília*,*Rio de Janeiro* are few of the many cities in Brazil that have bore the brunt of the pandemic. Table \@ref(fig:brazilcity) shows the confirmed cases and deaths of the cities in Brazil along with it's population. *São Paulo*,the most affected city saw 4.4 % of the cases reported result in death where as *Rio de Janeiro* saw 10 % .Cities like *Laje do Muriaé* in the state of *Rio de Janeiro* and *Fernando Falcão* in state of *Maranhão* saw 233 and 734 confirmed cases respectively with 0 deaths. 
 
-
-
-
-```{r, fig.cap = "City wise Data"}
+```{r brazilcity, fig.cap = "COVID-19 in Cities of Brazil"}
 
 sele <- sele %>%
   rename(State = state,
@@ -252,11 +260,17 @@ sele <- sele %>%
          Population=population,
          Cases=cases,
          Deaths=deaths) %>%
-mutate(Deaths_Percentage=round((Deaths/Cases)*100,2))
+mutate(Deaths_Percentage=round((Deaths/Cases)*100,2)) %>%
+  filter(City!="Curvelândia") %>%  filter(City!="Luciara")
  reactable(
   sele,
+  defaultColDef = colDef(
+    align = "center",
+    headerStyle = list(background = "#f7f7f8")
+  ),
   columns = list(
-  Deaths_Percentage = colDef(name = "Deaths among Cases (%)")),
+  Deaths_Percentage = colDef(name = "Deaths among Cases (%)",minWidth=200),
+  Population=colDef(minWidth=140)),
   searchable = TRUE,
   filterable = TRUE,
   defaultSortOrder = "desc",
@@ -278,10 +292,12 @@ mutate(Deaths_Percentage=round((Deaths/Cases)*100,2))
   )
 )
  
-
-
 ```
 
+Through the analysis conducted,we have seen that different cities and regions in Brazil are affected differently.It is observed that among the 5 regions of Brazil,*Sudeste* is the region with most number of cases and deaths.It is also observed that the cities like *São Paulo* ,*Rio de Janeiro*   are impacted more during this pandemic. 
+
+During these difficult times,lives of people in Brazil and all over the world are far from normal. It is also very important to mention that according to [The Guardian](https://www.theguardian.com/world/2020/jun/07/brazil-stops-releasing-covid-19-death-toll-and-wipes-data-from-official-site) , on June 6 2020, the Brazilian government had stopped publishing the number of COVID-19 positive cases and deaths in the country, as well as the cases breakdown by state, and erased the published history.The reporting was resumed on June 9 2020.
+The role of accurate data and it's analysis has never been more important as it is essential in these times to know the magnitude of impact COVID-19 has exhibited. 
 
 
 
