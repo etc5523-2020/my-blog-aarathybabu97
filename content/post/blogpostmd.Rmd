@@ -8,7 +8,7 @@ tags: []
 subtitle: ''
 summary: ''
 authors: []
-lastmod: '2020-09-02T13:22:25+10:00'
+lastmod: '2020-09-04T13:22:25+10:00'
 featured: yes
 image:
   caption: ''
@@ -170,6 +170,7 @@ covid_region <- region_join %>%
 
 reactable(
   covid_region,
+  defaultColDef = colDef(minWidth = 200),
   columns = list(
   Deaths_Percentage = colDef(name = "Deaths among Cases (%)")),
   searchable = TRUE,
@@ -239,9 +240,7 @@ setMaxBounds(map, -28.628965, 5.269331,-73.983063,-33.868906) %>%
 
 ```
 
-2019 Novel Coronavirus (2019-nCoV) is a virus (more specifically, a coronavirus) identified as the cause of an outbreak of respiratory illness first detected in Wuhan, China. Early on, many of the patients in the outbreak in Wuhan, China reportedly had some link to a large seafood and animal market, suggesting animal-to-person spread. However, a growing number of patients reportedly have not had exposure to animal markets, indicating person-to-person spread is occurring. At this time, itâ€™s unclear how easily or sustainably this virus is spreading between people - CDC
 
-This dataset has information on the number of cases in Brazil. Please note that this is a time series data and so the number of cases on any given day is a cumulative number.
 
 
 
