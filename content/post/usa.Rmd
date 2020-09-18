@@ -48,13 +48,14 @@ fips <- fips_codes
 ```
 ## Data Description 
 
-The primary source for the data used in the analysis is the [github page maintained by The New York Times](https://github.com/nytimes/covid-19-data) where an extensive collection of data related to the COVID-19 pandemic is maintained.The New York Times releases a series of data files with cumulative counts of cases and deaths with respect to each county and state in US . Each row of data comprises of the state or county name ,their cumulative counts of cases and deaths which includes confirmed and probable counts on the criteria that was developed by states and the federal government.It also contains the date of the event and the FIPS code of the state. The dataset used in this analysis have all the data recorded till 2020-09-12.
+The primary source for the data used in the analysis is the [Github page maintained by The New York Times](https://github.com/nytimes/covid-19-data) where an extensive collection of data related to the COVID-19 pandemic is maintained.The New York Times releases a series of data files with cumulative counts of cases and deaths with respect to each county and state in US . Each row of data comprises of the state or county name ,their cumulative counts of cases and deaths which includes confirmed and probable counts on the criteria that was developed by states and the federal government.It also contains the date of the event and the FIPS code of the state. The dataset used in this analysis have all the data recorded till 2020-09-12.
 
 A glimpse of the dataset on the cases and deaths in each county is as shown in table \@ref(tab:tab1) below,
 
-```{r tab1, fig.cap="Glimpse of the dataset on County wise cases and deaths"}
+```{r tab1, fig.cap="Glimpse of dataset containing information on COVID-19 in each county."}
 counties <- counties %>% filter(county!="Unknown")
 library(kableExtra)
+library(knitr)
 counties %>% head(5) %>% kable()%>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed",full_width = F, position = "float_right")) 
 
@@ -86,23 +87,7 @@ Along with the New York Times data,the R package *tidycensus* was also used to o
 
 - **pneumonia_influenza_or_covid** : Deaths due to  Pneumonia or Influenza or COVID 
 
-```{r naniar}
-library(naniar)
 
-deathtoll <- nycdeaths %>%
-  rename(age='Age group',
-         state=State,
-         race='Race and Hispanic Origin Group',
-         deaths='COVID-19 Deaths',
-         pnumdeath='Pneumonia and COVID-19 Deaths',
-         picdeath='Pneumonia, Influenza, or COVID-19 Deaths') %>%
-  mutate(deaths=deaths+pnumdeath) %>%
-  dplyr::select(state,age,race,deaths)
-deathtoll <- deathtoll %>%
-dplyr::filter(race!="Unknown") # 25 unknown values
-
-deathtoll[is.na(deathtoll)] = 0
-```
 
 
 The limitation of this dataset would be the presence of the *"Unknown"* values for Race and Ethnicity. Let us now look at how often a mask is used in USA. 
@@ -146,7 +131,7 @@ state_mask_full <- left_join(state_cases,state_mask,by="state") %>%
 
 ```
 
-```{r DT}
+```{r DT, fig.cap="The Table lists the COVID-19 incidences and deaths in each state of USA and their corresponding mask usage among residents."}
 library(DT)
 
 table <- state_mask_full %>%
@@ -171,9 +156,12 @@ widgetframe::frameWidget(datatable(table))
 ```
 
 
+
+
+
 Let us now look at the frequency of mask usage in the top 10 states where COVID-19 has high incidence. We can see from the figure \@ref(fig:always) the proportion of people in each state wearing masks always,frequently, sometimes,rarely and also never wearing masks.With such high incidence of COVID-19 in these states,it is reasonable to see that the proportion of people who never wear any kind of mask is very low and that the proportion of people who always wear mask is higher.An interesting pattern we can see here is that California being the state with highest number of cases is only third to New York where more than 75% of people wear mask always when they are in near proximity to other people.This could be because the occurance of deaths in New York is higher than that of California.We can also see that in New Jersey being the state with second highest number of deaths comes second to New York in terms of proportion of people wearing masks always. With that being said, Texas with higher rate of deaths has lower proportion of such people compared to California.This pattern can be seen in reverse for all other mask wearing frequencies. For example, New York has the lowest proportion of people who never wears masks where as Tennessese has the highest proportion. This hold true for every other usage frequency except for frequent usage where we can see that Illinois has higher share of people when compared to Tennessese. 
 
-```{r always}
+```{r always, fig.cap="The Bar plot shows frequency of mask usage in the top 10 worst hit states of USA.New York has higher proportion of regular mask usage."}
 top <- state_mask_full %>%
   pivot_longer(cols = c(4:8),names_to="frequency",values_to="value") %>%
   arrange(desc(cases)) 
@@ -219,7 +207,7 @@ legend.title = element_blank())+
 
 Now that we are seeing patterns in deaths and mask usage in state, let us dive into analyzing the correlation between the incidence of cases and deaths with the frequency of mask usage.
 
-```{r ggpairs, fig.height=6.5,fig.width=7}
+```{r ggpairs, fig.height=6.5,fig.width=7, fig.cap="The scatter plot matrix depicts the correlation between the frequency of mask usage and cases as well as deaths.The number of deaths appear to have more influence of the behaviour of mask usage."}
 library(GGally)
 options(scipen = 999)
 
@@ -245,26 +233,32 @@ ggpairs(state_mask_full,columns=c(2:8),columnLabels = c("Cases","Deaths","Never"
 
 As seen in figure \@ref(fig:ggpairs), Cases and deaths have a positive correlation that is with the cases going up, it is likely for the death figures to go up too. It is also evident from the figure that deaths have a positive correlation with the proportion of people wearing mask always and a negative correlation with other frequencies. This can also be seen in cases of cases too but whats more interesting is that the correlation is more between deaths and frequency 'always' is more than what 'always' has with cases. Therefore, it explains the pattern we saw in New York having higher proportion of regular mask wearing population.
 
-Another interesting point to note is that if there is a large proportion of people not wearing masks then it is also likely that there is a presence of people wearing masks rarely.
+Another interesting point to note is that if there is a large proportion of people not wearing masks then it is also likely that there is a presence of people wearing masks rarely.It can also be seen that if there is a large proportion of people who wear masks sometimes, then it is more likely to have a large proportion of people in that state never wearing masks than have a large population wearing it frequently. 
+
+
+## Is there a racial disparity in COVID-19 deaths in New York?
  
-```{r nycd}
+Now that we saw the death toll due to COVID-19 is highest in New York. Let us analyze if there is any racial disparity in the COVID-19 related deaths. In order to do that,the dataset released by National Center for Health Statistics is taken into consideration and the proportion of deaths with respect to each ethnic group is calculated.The deaths in the dataset is mainly of three types, COVID-19 related, Pnuemonia along with COVID-19 deaths , and deaths categorized as Pneumonia, Influenza, or COVID-19 Deaths.To calculate the proportion, the deaths related COVID-19 and deaths caused by Pneumonia and OVID-19 is taken into consideration.Since there is a possibility that other category could be something other than COVID-19, it was not taken into account.The major ethnic groups in New York are Non-Hispanic White,Non-Hispanic Black,Non-Hispanic American Indian or Alaska Native,Non-Hispanic Asian and Non-Hispanic Native Hawaiian or Other Pacific Islander and Hispanic.In order to focus more on New York City,one of the most culturally diverse city in the world, two different set of calculations where carried out focusing New York City and rest of New York separately. The calculated proportion of deaths above 0% in New York excluding New York City is shown in figure \@ref(fig:toll).
+ 
+```{r naniar}
+library(naniar)
 
-nyc <- counties %>%
-  filter(state=="New York")
+deathtoll <- nycdeaths %>%
+  rename(age='Age group',
+         state=State,
+         race='Race and Hispanic Origin Group',
+         deaths='COVID-19 Deaths',
+         pnumdeath='Pneumonia and COVID-19 Deaths',
+         picdeath='Pneumonia, Influenza, or COVID-19 Deaths') %>%
+  mutate(deaths=deaths+pnumdeath) %>%
+  dplyr::select(state,age,race,deaths)
+deathtoll <- deathtoll %>%
+dplyr::filter(race!="Unknown") # 25 unknown values
 
-
-newyork <- nyc %>%
-  filter(county!="Unknown") %>%
-  group_by(county) %>%
-  summarise(cases=max(cases),
-            deaths=max(deaths)) %>%
-  mutate(county=paste0(county," County"))
-newyork$county <- recode(newyork$county,
-                         "New York City County"="New York State")
-
+deathtoll[is.na(deathtoll)] = 0
 ```
 
-```{r toll}
+```{r toll, fig.cap="The Bar plot shows the fatality rate in New York excluding New York City. The most affected racial and ethnic group is Non Hispanic White community."}
 
 one <- deathtoll %>%
 dplyr::filter(state=="New York") %>%
@@ -289,7 +283,13 @@ legend.title = element_blank())+
   ylab("Ethnic Groups\n")+
   xlab("\nFatality rate (%)") +
    theme(plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"))
+```
 
+From the figure,it can be observed that around 60% of the deaths in parts of New York other than New York City,is of Non Hispanic White where as the lowest rate is seen in Non Hispanic Asian community with a fatality rate below 5%.The deaths due to COVID in Hispanic and Non Hispanic Black communities are between 15-20% with Hispanic proportion being at the upper end. 
+
+With that being said we can see a completely different pattern when we look at the fatality in New York City in \@ref(fig:two), which is much more diverse than rest of State of New York.The figure shows the fatality rates that is above 0% in New York City. We can see that the around 35 % of the deaths are of people of Hispanic origin followed closely by the Non Hispanic Black community with a fatality rate of 30 % and Non Hispanic White with around 25 % fatality. The lowest can be seen again in Non Hispanic Asian community but the fatality is more in New York City when compared to other parts of New York.
+
+```{r two, fig.cap="The Bar plot shows the fatality rate in New York city. The most affected racial and ethnic group is Hispanic community."}
 two <- deathtoll %>%
 dplyr::filter(state=="New York City") %>%
   group_by(race) %>%
@@ -302,7 +302,7 @@ dplyr::filter(state=="New York City") %>%
   geom_col(aes(y=reorder(race,proportion),x=proportion,
                fill=race),width=0.8)+
   scale_fill_manual(values = cols)+
-  scale_x_continuous(breaks = seq(0,100,by=10))+
+ scale_x_continuous(breaks = seq(0,100,by=10))+
 
   theme(legend.position = "top",
   panel.background = element_rect(fill = "#f1f2f6",
@@ -317,4 +317,4 @@ legend.title = element_blank())+
 
 
 ```
-
+Through this analysis, it is possible to see that there is a level of racial disparity in deaths due to COVID-19. According to an article published by [Mayo Clinic](https://www.mayoclinic.org/diseases-conditions/coronavirus/expert-answers/coronavirus-infection-by-race/faq-20488802),the area where you live have a major impact on the COVID-19 incidence and deaths as well as the chances of getting treatment. For example, members of low income racial,ethnic minority sections might be living in multi-generational homes, crowded conditions and densely populated areas,with New York City being one. This could make social distancing difficult to practise. Apart from that,access to health care and racism also has an impact on the health risks during this pandemic.Members of racial and ethnic minorities encounter barriers in getting access to health insurance there by hurting the chances for quality health care. We also saw how cases and deaths relate to the practise of wearing masks in different states of the US and it can be said that more than cases, deaths due to COVID-19 influence people to wear masks and seeing New York having more deaths than California even though it has higher incidences,in a way we can say that the on-going pandemic hit New York the most in the US.
