@@ -18,9 +18,182 @@
       <pubDate>Thu, 17 Sep 2020 00:00:00 +0000</pubDate>
       <guid>/post/usa/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
 
 
-&lt;p&gt;Blog in progress&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;Coronavirus disease 2019 (COVID-19)&lt;/strong&gt; is the most discussed and relevant issue that the world is facing in the year 2020.What began in Wuhan, has spread over the globe in a matter of moments. With practically 30.1 million total cases world wide,the pandemic has shown it’s ugliest side in certain nations than the others.Countries like the United States of America,India, Brazil are few of the many countries facing the brunt of the global pandemic right now.The rise of COVID-19 and its resultant deaths has also shown light towards the racial disparity in society.The most certain statement we can make as of now is that, COVID-19 is digging in for the long haul and has cleared path for a ‘new normal’ where masks,face shields and sanitizers are our new closest companions and social distancing,our better approach for living.Therefore it is intriguing to analyze how often masks are being used in the worst hit states of US and also how proportion of deaths pan out across different ethnic groups in one of the most diverse cities in the world,New York City.&lt;/p&gt;
+&lt;div id=&#34;data-description&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data Description&lt;/h2&gt;
+&lt;p&gt;The primary source for the data used in the analysis is the &lt;a href=&#34;https://github.com/nytimes/covid-19-data&#34;&gt;github page maintained by The New York Times&lt;/a&gt; where an extensive collection of data related to the COVID-19 pandemic is maintained.The New York Times releases a series of data files with cumulative counts of cases and deaths with respect to each county and state in US . Each row of data comprises of the state or county name ,their cumulative counts of cases and deaths which includes confirmed and probable counts on the criteria that was developed by states and the federal government.It also contains the date of the event and the FIPS code of the state. The dataset used in this analysis have all the data recorded till 2020-09-12.&lt;/p&gt;
+&lt;p&gt;A glimpse of the dataset on the cases and deaths in each county is as shown in table &lt;a href=&#34;#tab:tab1&#34;&gt;&lt;strong&gt;??&lt;/strong&gt;&lt;/a&gt; below,&lt;/p&gt;
+&lt;table class=&#34;table table-striped table-hover table-condensed&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+date
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+county
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+state
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+fips
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+cases
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+deaths
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2020-01-21
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Snohomish
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Washington
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+53061
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2020-01-22
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Snohomish
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Washington
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+53061
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2020-01-23
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Snohomish
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Washington
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+53061
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2020-01-24
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Cook
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Illinois
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+17031
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+2020-01-24
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Snohomish
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Washington
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+53061
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;In order to have a better sense of understanding how prevalent mask usage is,the data on their &lt;a href=&#34;https://www.nytimes.com/interactive/2020/07/17/upshot/coronavirus-face-mask-map.html&#34;&gt;survey on mask usage&lt;/a&gt; that has the estimates share of people in a particular county that responded to the question, &lt;em&gt;How often do you wear a mask in public when you expect to be within six feet of another person?&lt;/em&gt; , was used.The survey data contains fields with the following definitions,&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;COUNTYFP&lt;/strong&gt;: The county FIPS code.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;NEVER&lt;/strong&gt;: The estimated share of people in this county who would say &lt;strong&gt;never&lt;/strong&gt; in response to the question “How often do you wear a mask in public when you expect to be within six feet of another person?”&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;RARELY&lt;/strong&gt;: The estimated share of people in this county who would say &lt;strong&gt;rarely&lt;/strong&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;SOMETIMES&lt;/strong&gt;: The estimated share of people in this county who would say &lt;strong&gt;sometimes&lt;/strong&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;FREQUENTLY&lt;/strong&gt;: The estimated share of people in this county who would say &lt;strong&gt;frequently&lt;/strong&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ALWAYS&lt;/strong&gt;: The estimated share of people in this county who would say &lt;strong&gt;always&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Along with the New York Times data,the R package &lt;em&gt;tidycensus&lt;/em&gt; was also used to obtain the FIPS code of each county as the FIPS code in the survey data set required formating.To analyse the racial disparity in COVID-19 deaths in New York, the dataset published by the &lt;a href=&#34;https://data.cdc.gov/NCHS/Deaths-involving-coronavirus-disease-2019-COVID-19/ks3g-spdg&#34;&gt;National Center for Health Statistics&lt;/a&gt; which has the data on the deaths involving coronavirus disease 2019 (COVID-19), pneumonia, and influenza reported to NCHS by race, age, and state.. The dataset used in the analysis has all the records till The dataset used in this analysis have all the data recorded till 2020-09-16 and contains the following variables,&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;data_as_of&lt;/strong&gt; : Date of Analysis&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;state&lt;/strong&gt; : State&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;age_group_new&lt;/strong&gt; :Age Group&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;race_and_hispanic_origin&lt;/strong&gt;: Race and Hispanic Origin Group&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;covid_19_deaths&lt;/strong&gt; : Deaths involving COVID&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;pneumonia_and_covid_19_deaths&lt;/strong&gt; : Deaths involving COVID and Pneumonia&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;pneumonia_influenza_or_covid&lt;/strong&gt; : Deaths due to Pneumonia or Influenza or COVID&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The limitation of this dataset would be the presence of the &lt;em&gt;“Unknown”&lt;/em&gt; values for Race and Ethnicity. Let us now look at how often a mask is used in USA.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;how-often-is-a-mask-used-in-worst-hit-states-in-usa&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;How often is a mask used in worst hit states in USA?&lt;/h2&gt;
+&lt;p&gt;To analyze how often a mask is being used in a state,the average estimates for the frequencies of mask usage was calculated for each state.The table &lt;a href=&#34;#fig:DT&#34;&gt;&lt;strong&gt;??&lt;/strong&gt;&lt;/a&gt; shows the frequencies of mask usage in different states of USA arranged according to decreasing number of cases. We can see that California is leading with the highest number of cases and even though California has the highest number of positive cases, New York has a significantly higher deaths when compared to other states.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;/post/usa_files/figure-html//widgets/widget_DT.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Let us now look at the frequency of mask usage in the top 10 states where COVID-19 has high incidence. We can see from the figure &lt;a href=&#34;#fig:always&#34;&gt;&lt;strong&gt;??&lt;/strong&gt;&lt;/a&gt; the proportion of people in each state wearing masks always,frequently, sometimes,rarely and also never wearing masks.With such high incidence of COVID-19 in these states,it is reasonable to see that the proportion of people who never wear any kind of mask is very low and that the proportion of people who always wear mask is higher.An interesting pattern we can see here is that California being the state with highest number of cases is only third to New York where more than 75% of people wear mask always when they are in near proximity to other people.This could be because the occurance of deaths in New York is higher than that of California.We can also see that in New Jersey being the state with second highest number of deaths comes second to New York in terms of proportion of people wearing masks always. With that being said, Texas with higher rate of deaths has lower proportion of such people compared to California.This pattern can be seen in reverse for all other mask wearing frequencies. For example, New York has the lowest proportion of people who never wears masks where as Tennessese has the highest proportion. This hold true for every other usage frequency except for frequent usage where we can see that Illinois has higher share of people when compared to Tennessese.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/usa_files/figure-html/always-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Now that we are seeing patterns in deaths and mask usage in state, let us dive into analyzing the correlation between the incidence of cases and deaths with the frequency of mask usage.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/usa_files/figure-html/ggpairs-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;As seen in figure &lt;a href=&#34;#fig:ggpairs&#34;&gt;&lt;strong&gt;??&lt;/strong&gt;&lt;/a&gt;, Cases and deaths have a positive correlation that is with the cases going up, it is likely for the death figures to go up too. It is also evident from the figure that deaths have a positive correlation with the proportion of people wearing mask always and a negative correlation with other frequencies. This can also be seen in cases of cases too but whats more interesting is that the correlation is more between deaths and frequency ‘always’ is more than what ‘always’ has with cases. Therefore, it explains the pattern we saw in New York having higher proportion of regular mask wearing population.&lt;/p&gt;
+&lt;p&gt;Another interesting point to note is that if there is a large proportion of people not wearing masks then it is also likely that there is a presence of people wearing masks rarely.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/usa_files/figure-html/toll-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;img src=&#34;/post/usa_files/figure-html/toll-2.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
 </description>
     </item>
     
