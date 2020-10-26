@@ -1,0 +1,86 @@
+---
+title: Review on covid19usa R package
+author: Aarathy Babu
+date: '2020-10-25'
+slug: review-on-covid19usa-r-package
+categories: []
+tags: []
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2020-10-25T22:27:58+11:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+
+It's review time ! This week's blog post is all about an R package I'm very excited to review. Last week, my classmates and I had the opportunity to create an R package as a part of ETC5523 Communicating with Data unit and this week I'll be reviewing my classmate, Lachlan Moody's R package [covid19usa](https://github.com/etc5523-2020/r-package-assessment-ltmoo2). The package literally packs up a shiny web application within that explores the data on COVID-19 pandemic in the United States of America. As a part of the review, I'm focusing on answering the following questions,
+
+- What did I think this package would do? Did it do it?
+- Are there improvements that could be made to the code? Are there
+improvements that could be made to the shiny app inside the package? Is the documentation sufficient to get
+started? 
+
+## What did I think this package would do? Did it do it?
+
+From the name of the package,*covid19usa* itself, I got a gist of what the package would be about. I was sure that it would be regarding the data on COVID-19 pandemic USA and the digging deeper into the package, I was not disappointed. The README.md file in the github repository of the package was extremely helpful in giving me a big overview on the package. After reading the README file, I expected the package to launch a shiny web application that showcases the total cases, total deaths in USA and that is exactly what the package delivered. 
+
+### About the App
+
+Before I proceed further with my review, I believe it would be easier for my readers to get a brief overview on what the app entails as well as it's structure. As I mentioned earlier, the app shows a choropleth map that shows the total cases and deaths in states of USA. To toggle between the cases and deaths, the author has cleverly provided a radio button which also influences the impact of COVID-19 over time, that is change in cases and deaths shown in the app. A slider is also provided to select the range of date the user wishes to choose. The app also provides a table that compares the cases and deaths in the states selected, with the national average.
+
+### Other features of the package
+
+The package includes four functions which according to the vignette and README file ,was created by the author to improve the logic of the web application enclosed in the package. 
+
+- *random_states* 
+- *create_input* 
+- *average_measure*
+- *present_table*
+
+The examples on these functions given in the README file were on point and gave the desired results as mentioned. 
+
+## Are there improvements that could be made ?
+
+It was quite hard for me to look for things in the package that I wouldve done differently. I was very impressed by the styling of the app as well as the selection of states in US through click for depicting the impact of the pandemic over time. Each element of the app is well thought of and also beautifully compliments each other. 
+
+The codes in the package and for the app in particular are clear as well as reproducible. The only thing I would suggest for improvement of the app is to change the color palette used in the line plot under  "Impact of COVID-19 over time" as it seemed difficult for me to distinguish between the lines depicting each state. 
+
+The documentation of the functions used in the package were extremely helpful to navigate through the package. Ignoring one or two mistakes in spellings, the documentation can be deemed more than sufficient to get started.
+
+
+## What have I learned?
+
+I would say the primary lesson that I have learned after taking a look at the author's package is how an app as well as a package can be made precise, well laid out and thoughtful. I enjoyed a lot navigating through the package as well as the app enclosed within. The linkage between the map and line plot was an interesting touch as well.
+
+Another lesson I have learnt is the importance of the documentation in a package. Without a well detailed documentation like this, I am sure I would have been lost on what each function does in the package.
+
+I believe I found it more interesting and insightful because I have been working on the COVID-19 data on US as well, therefore it was a good learning opportunity for me to learn how my peers have used the same data.      
+
+
+## Appendix
+
+### Package Review
+
+
+#### Documentation
+
+
+The package includes all the following forms of documentation:
+
+- [X] **Installation instructions:** for the package is found in README
+- [X] **Vignette(s)** demonstrating major functionality that runs successfully locally
+- [X] **Function Documentation:** for all exported functions in R help
+- [X] **Examples** for all exported functions in R Help that run successfully locally
+
+
+#### Functionality
+
+
+- [X] **Installation:** Installation succeeds as documented.
+- [X] **Functionality:** Any functional claims of the software been confirmed.
+- [X] **Automated tests:** Unit tests cover essential functions of the package and a reasonable range of inputs and conditions. All tests pass on the local machine.
