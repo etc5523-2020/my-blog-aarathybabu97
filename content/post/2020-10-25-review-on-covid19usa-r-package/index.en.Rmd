@@ -25,6 +25,9 @@ It's review time ! This week's blog post is all about an R package I'm very exci
 improvements that could be made to the shiny app inside the package? Is the documentation sufficient to get
 started? 
 
+![Glimpse of the enclosed Shiny App](/2020-10-25-review-on-covid19usa-r-package/index.en_files/ltmoo1.png)
+
+
 ## What did I think this package would do? Did it do it?
 
 From the name of the package,*covid19usa* itself, I got a gist of what the package would be about. I was sure that it would be regarding the data on COVID-19 pandemic USA and the digging deeper into the package, I was not disappointed. The README.md file in the github repository of the package was extremely helpful in giving me a big overview on the package. After reading the README file, I expected the package to launch a shiny web application that showcases the total cases, total deaths in USA and that is exactly what the package delivered. 
@@ -32,6 +35,8 @@ From the name of the package,*covid19usa* itself, I got a gist of what the packa
 ### About the App
 
 Before I proceed further with my review, I believe it would be easier for my readers to get a brief overview on what the app entails as well as it's structure. As I mentioned earlier, the app shows a choropleth map that shows the total cases and deaths in states of USA. To toggle between the cases and deaths, the author has cleverly provided a radio button which also influences the impact of COVID-19 over time, that is change in cases and deaths shown in the app. A slider is also provided to select the range of date the user wishes to choose. The app also provides a table that compares the cases and deaths in the states selected, with the national average.
+
+![Snapshot from the enclosed Shiny App depicting the Impact of COVID-19 over time](/2020-10-25-review-on-covid19usa-r-package/index.en_files/ltmoo2.png)
 
 ### Other features of the package
 
