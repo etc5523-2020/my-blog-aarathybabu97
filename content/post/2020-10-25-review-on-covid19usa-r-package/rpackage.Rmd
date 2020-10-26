@@ -28,7 +28,7 @@ started?
 
 ## What did I think this package would do? Did it do it?
 
-From the name of the package,*covid19usa* itself, I got a gist of what the package would be about. I was sure that it would be regarding the data on COVID-19 pandemic USA and the digging deeper into the package, I was not disappointed. The README.md file in the github repository of the package was extremely helpful in giving me a big overview on the package. After reading the README file, I expected the package to launch a shiny web application that showcases the total cases, total deaths in USA and that is exactly what the package delivered. 
+From the name of the package,*covid19usa* itself I got a gist of what the package would be about. I was sure that it would be regarding the data on COVID-19 pandemic in USA and the digging deeper into the package, I was not disappointed. The README.md file in the github repository of the package was extremely helpful in giving me a big overview on the package. After reading the README file, I expected the package to launch a shiny web application that showcases the total cases, total deaths in USA and that is exactly what the package delivered. 
 
 
 ### About the App
@@ -39,7 +39,7 @@ Before I proceed further with my review, I believe it would be easier for my rea
 
 ### Other features of the package
 
-The package includes four functions which according to the vignette and README file ,was created by the author to improve the logic of the web application enclosed in the package. 
+The package includes four functions which according to the [vignette](https://etc5523-2020.github.io/r-package-assessment-ltmoo2/) and README file ,was created by the author to improve the logic of the web application enclosed in the package. 
 
 - *random_states* 
 - *create_input* 
@@ -59,9 +59,9 @@ The documentation of the functions used in the package were extremely helpful to
 
 ## What have I learned?
 
-I would say the primary lesson that I have learned after taking a look at the author's package is how an app as well as a package can be made precise, well laid out and thoughtful. I enjoyed a lot navigating through the package as well as the app enclosed within. The linkage between the map and line plot was an interesting touch as well.
+I would say the primary lesson that I have learned after taking a look at the author's package is how an app as well as a package can be made precise, well laid out and thoughtful. I enjoyed navigating through the package as well as the app enclosed within. The linkage between the map and line plot was an interesting touch as well.
 
-Another lesson I have learnt is the importance of the documentation in a package. Without a well detailed documentation like this, I am sure I would have been lost on what each function does in the package.
+Another lesson I have learned is the importance of the documentation in a package. Without a well detailed documentation like the package's, I am sure I would have been lost on what each function does in the package.
 
 I believe I found it more interesting and insightful because I have been working on the COVID-19 data on US as well, therefore it was a good learning opportunity for me to learn how my peers have used the same data.      
 
