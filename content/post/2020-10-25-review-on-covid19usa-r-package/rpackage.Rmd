@@ -99,4 +99,7 @@ The package includes all the following forms of documentation:
 
 #### Comments
 
-- 
+- The installation went well as I expected and as documentated. 
+- The vignette is very helpful in navigating through the package.
+- The functionality of the package is confirmed and the documentation of the functions is sufficient. 
+- Examples showcased in the documentation runs successfully locally and the functions of the package have passed all essential unit tests.
