@@ -67,7 +67,9 @@ I would say the primary lesson that I have learned after taking a look at the au
 
 Another lesson I have learned is the importance of the documentation in a package. Without a well detailed documentation like the package's, I am sure I would have been lost on what each function does in the package.
 
-I believe I found it more interesting and insightful because I have been working on the COVID-19 data on US as well, therefore it was a good learning opportunity for me to learn how my peers have used the same data.      
+I believe I found it more interesting and insightful because I have been working on the COVID-19 data on US as well, therefore it was a good learning opportunity for me to learn how my peers have used the same data.
+
+To sum it up, I loved going through the covid19usa R package and I would suggest you to check it out as well. 
 
 
 ![Source : Giphy](https://media.giphy.com/media/3o7btSt2Et1GgIaDAY/giphy.gif)
