@@ -25,10 +25,14 @@ It's review time ! This week's blog post is all about an R package I'm very exci
 improvements that could be made to the shiny app inside the package? Is the documentation sufficient to get
 started? 
 
+![Source : Giphy](https://media.giphy.com/media/555x0gFF89OhVWPkvb/giphy.gif)
 
-## What did I think this package would do? Did it do it?
+## What did I think this package would do? Did it do it?  
 
 From the name of the package,*covid19usa* itself I got a gist of what the package would be about. I was sure that it would be regarding the data on COVID-19 pandemic in USA and the digging deeper into the package, I was not disappointed. The README.md file in the github repository of the package was extremely helpful in giving me a big overview on the package. After reading the README file, I expected the package to launch a shiny web application that showcases the total cases, total deaths in USA and that is exactly what the package delivered. 
+
+
+![Source : Giphy](https://media.giphy.com/media/uuxcAmIzAbKlvz4kZS/giphy.gif)
 
 
 ### About the App
@@ -66,6 +70,8 @@ Another lesson I have learned is the importance of the documentation in a packag
 I believe I found it more interesting and insightful because I have been working on the COVID-19 data on US as well, therefore it was a good learning opportunity for me to learn how my peers have used the same data.      
 
 
+![Source : Giphy](https://media.giphy.com/media/3o7btSt2Et1GgIaDAY/giphy.gif)
+
 ## Appendix
 
 ### Package Review
@@ -88,3 +94,9 @@ The package includes all the following forms of documentation:
 - [X] **Installation:** Installation succeeds as documented.
 - [X] **Functionality:** Any functional claims of the software been confirmed.
 - [X] **Automated tests:** Unit tests cover essential functions of the package and a reasonable range of inputs and conditions. All tests pass on the local machine.
+
+
+
+#### Comments
+
+- 

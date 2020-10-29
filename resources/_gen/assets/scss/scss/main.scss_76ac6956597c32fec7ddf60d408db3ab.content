@@ -9230,3 +9230,9 @@ html[dir="rtl"] body {
 
 .center {
   text-align: center; }
+
+.figure {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%; }
